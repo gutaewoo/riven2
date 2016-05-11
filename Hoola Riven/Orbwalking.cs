@@ -930,11 +930,6 @@ namespace HoolaRiven
             /// <returns>AttackableUnit.</returns>
 
 
-                //Forced target
-                if (_forcedTarget.IsValidTarget() && InAutoAttackRange(_forcedTarget))
-                {
-                    return _forcedTarget;
-                }
 
 
 
