@@ -558,7 +558,6 @@ namespace HoolaRiven
                 if (target.IsValidTarget() && !target.IsZombie)
                 {
                     ForceCastQ(target);
-                    Utility.DelayAction.Add(1, ForceW);
                 }
             }
             if (Q.IsReady() && QStack == 3)
