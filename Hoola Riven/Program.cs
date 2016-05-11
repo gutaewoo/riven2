@@ -473,15 +473,6 @@ namespace HoolaRiven
                     Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
                 }
             }
-            else if (!UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
-            {
-                if (!InWRange(targetR))
-                {
-                    E.Cast(targetR.Position);
-                    ForceR();
-                    Utility.DelayAction.Add(200, ForceW);
-                }
-            }
             else if (UseHoola && W.IsReady() && E.IsReady())
             {
                 if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
@@ -490,15 +481,6 @@ namespace HoolaRiven
                     Utility.DelayAction.Add(10, ForceItem);
                     Utility.DelayAction.Add(200, ForceW);
                     Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
-                }
-            }
-            else if (!UseHoola && W.IsReady() && targetR != null && E.IsReady())
-            {
-                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
-                {
-                    E.Cast(targetR.Position);
-                    Utility.DelayAction.Add(10, ForceItem);
-                    Utility.DelayAction.Add(240, ForceW);
                 }
             }
             else if (E.IsReady())
