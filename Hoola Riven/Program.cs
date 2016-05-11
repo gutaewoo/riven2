@@ -935,8 +935,7 @@ namespace HoolaRiven
 
         public static bool IsKillableR(Obj_AI_Hero target)
         {
-            return !target.IsInvulnerable && totaldame(target) >= target.Health &&
-                   Basicdmg(target) <= target.Health;
+            return !target.IsInvulnerable && totaldame(target) >= target.Health && basicdmg(target) <= target.Health;
         }
 
       private static double totaldame(Obj_AI_Base target)
