@@ -356,6 +356,8 @@ namespace HoolaRiven
             UseRMaxDam();
             AutoUseW();
             Killsteal();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst) Burst();
+        }
 
 
 
