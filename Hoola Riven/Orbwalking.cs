@@ -763,32 +763,24 @@ namespace HoolaRiven
 
                 /*Load the menu*/
 
-                _config.AddItem(
-                    new MenuItem("Flee", "Flee").SetShared().SetValue(new KeyBind('Z', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind('C', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("LWH", "Last Hit While Harass").SetShared().SetValue(false));
 
-                _config.AddItem(
-                    new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind('V', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press)));
+
+
+
+
+
+
 
                 _config.AddItem(
                     new MenuItem("Burst", "Burst").SetShared().SetValue(new KeyBind('T', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("FastHarass", "Fast Harass").SetShared().SetValue(new KeyBind('Y', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("StillCombo", "Combo without moving").SetShared().SetValue(new KeyBind('N', KeyBindType.Press)));
+
+
 
                 Player = ObjectManager.Player;
                 Game.OnUpdate += GameOnOnGameUpdate;
@@ -853,40 +845,16 @@ namespace HoolaRiven
                         return _mode;
                     }
 
-                    if (_config.Item("Orbwalk").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Combo;
-                    }
 
-                    if (_config.Item("StillCombo").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Combo;
-                    }
 
-                    if (_config.Item("LaneClear").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.LaneClear;
-                    }
 
-                    if (_config.Item("Farm").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Mixed;
-                    }
 
-                    if (_config.Item("LastHit").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.LastHit;
-                    }
 
-                    if (_config.Item("Flee").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Flee;
-                    }
 
-                    if (_config.Item("FastHarass").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.FastHarass;
-                    }
+
+
+
+
 
                     if (_config.Item("Burst").GetValue<KeyBind>().Active)
                     {
@@ -1133,8 +1101,7 @@ namespace HoolaRiven
                         return;
                     }
 
-                    //Block movement if StillCombo is used
-                    Move = !_config.Item("StillCombo").GetValue<KeyBind>().Active;
+
 
                     //Prevent canceling important spells
                     if (Player.IsCastingInterruptableSpell(true))
