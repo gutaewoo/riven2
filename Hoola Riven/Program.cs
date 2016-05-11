@@ -602,7 +602,7 @@ namespace HoolaRiven
                     if ((Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst ||
                         Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
                         Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass ||
-                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) && Youmu) CastYoumoo();
+                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) && Youmu);
                     break;
                 case "Spell4a":
                     LastR = Utils.GameTimeTickCount;
