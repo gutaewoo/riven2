@@ -24,6 +24,8 @@ namespace HoolaRiven
         private static bool forceR;
         private static bool forceR2;
         private static bool forceItem;
+        private static float LastQ;
+        private static float LastR;
         private static AttackableUnit QTarget;
         private static bool Dind => Menu.Item("Dind").GetValue<bool>();
         private static bool DrawCB => Menu.Item("DrawCB").GetValue<bool>();
