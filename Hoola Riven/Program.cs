@@ -16,7 +16,7 @@ namespace HoolaRiven
         private const string IsFirstR = "RivenFengShuiEngine";
         private const string IsSecondR = "RivenIzunaBlade";
         private static readonly SpellSlot Flash = Player.GetSpellSlot("summonerFlash");
-        private static Spell Q, Q1, W, E, R;
+        private static Spell Q, W, E, R;
         private static int QStack = 1;
         public static Render.Text Timer, Timer2;
         private static bool forceQ;
@@ -24,8 +24,6 @@ namespace HoolaRiven
         private static bool forceR;
         private static bool forceR2;
         private static bool forceItem;
-        private static float LastQ;
-        private static float LastR;
         private static AttackableUnit QTarget;
         private static bool Dind => Menu.Item("Dind").GetValue<bool>();
         private static bool DrawCB => Menu.Item("DrawCB").GetValue<bool>();
