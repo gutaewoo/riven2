@@ -217,20 +217,10 @@ namespace HoolaRiven
                         CastTitan();
                         return;
                     }
-                    if (W.IsReady() && InWRange(target))
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, ForceW);
-                        Utility.DelayAction.Add(2, () => ForceCastQ(target));
-                    }
                     else if (Q.IsReady())
                     {
                         ForceItem();
                         Utility.DelayAction.Add(1,()=>ForceCastQ(target));
-                    }
-                    else if (E.IsReady() && !Orbwalking.InAutoAttackRange(target) && !InWRange(target))
-                    {
-                        E.Cast(target.Position);
                     }
                 }
 
