@@ -463,12 +463,12 @@ namespace HoolaRiven
                 Utility.DelayAction.Add(1, ForceW);
             }
             if (W.IsReady() && InWRange(targetR) && ComboW && targetR != null) W.Cast();
-            else if (UseHoola && W.IsReady() && E.IsReady())
+            if (UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
             {
-                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
+                if (!InWRange(targetR))
                 {
                     E.Cast(targetR.Position);
-                    Utility.DelayAction.Add(10, ForceItem);
+                    ForceR();
                     Utility.DelayAction.Add(200, ForceW);
                     Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
                 }
