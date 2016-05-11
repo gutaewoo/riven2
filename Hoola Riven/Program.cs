@@ -456,42 +456,26 @@ namespace HoolaRiven
       private static void Combo()
         {
             var targetR = TargetSelector.GetTarget(250 + Player.AttackRange + 70, TargetSelector.DamageType.Physical);
-            if (R.IsReady() && R.Instance.Name == IsFirstR && Orbwalker.InAutoAttackRange(targetR) && AlwaysR && targetR != null) ForceR();
-            if (R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && InWRange(targetR) && ComboW && AlwaysR && targetR != null)
-            {
-                ForceR();
-                Utility.DelayAction.Add(1, ForceW);
-            }
+            
             if (W.IsReady() && InWRange(targetR) && ComboW && targetR != null) W.Cast();
-            if (UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
-            {
-                if (!InWRange(targetR))
-                {
-                }
-            }
-            else if (!UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
+            if (UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady())
             {
                 if (!InWRange(targetR))
                 {
                     E.Cast(targetR.Position);
                     ForceR();
                     Utility.DelayAction.Add(200, ForceW);
+                    Utility.DelayAction.Add(30, () => ForceCastQ(targetR));
                 }
             }
             else if (UseHoola && W.IsReady() && E.IsReady())
             {
-                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie)
-                {
-                    Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
-                }
-            }
-            else if (!UseHoola && W.IsReady() && targetR != null && E.IsReady())
-            {
-                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
+                (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
                 {
                     E.Cast(targetR.Position);
-                    Utility.DelayAction.Add(10, ForceItem);
-                    Utility.DelayAction.Add(240, ForceW);
+                    if (InWRange(targetR))
+                    Utility.DelayAction.Add(100, ForceW);
+                    Utility.DelayAction.Add(30, () => ForceCastQ(targetR));
                 }
             }
             else if (E.IsReady())
