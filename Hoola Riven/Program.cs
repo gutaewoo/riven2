@@ -560,13 +560,6 @@ namespace HoolaRiven
                     ForceCastQ(target);
                 }
             }
-            if (Q.IsReady() && QStack == 3)
-            {
-                if (target.IsValidTarget() && !target.IsZombie)
-                {
-                    ForceCastQ(target);
-                }
-            }
         }
 
       private static void Harass()
