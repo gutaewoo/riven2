@@ -477,7 +477,6 @@ namespace HoolaRiven
             {
                 if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
                 {
-                    Utility.DelayAction.Add(10, ForceItem);
                     Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
                 }
             }
