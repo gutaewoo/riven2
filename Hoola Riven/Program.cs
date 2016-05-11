@@ -562,20 +562,6 @@ namespace HoolaRiven
 
       private static void FastHarass()
         {
-            if (Q.IsReady() && E.IsReady())
-            {
-                var target = TargetSelector.GetTarget(450 + Player.AttackRange + 70, TargetSelector.DamageType.Physical);
-                if (target.IsValidTarget() && !target.IsZombie)
-                {
-                    if (!Orbwalking.InAutoAttackRange(target) && !InWRange(target)) E.Cast(target.Position);
-                    Utility.DelayAction.Add(10, ForceItem);
-                    Utility.DelayAction.Add(170, ()=>ForceCastQ(target));
-                }
-            }
-        }
-
-      private static void Harass()
-        {
             var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
             if (Q.IsReady() && QStack == 1)
             {
@@ -584,6 +570,33 @@ namespace HoolaRiven
                     ForceCastQ(target);
                     Utility.DelayAction.Add(1, ForceW);
                 }
+            }
+            if (Q.IsReady() && QStack == 3)
+            {
+                if (target.IsValidTarget() && !target.IsZombie)
+                {
+                    ForceCastQ(target);
+                }
+            }
+        }
+
+      private static void Harass()
+        {
+            var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
+            if (Q.IsReady() && W.IsReady() && E.IsReady() && QStack == 1)
+            {
+                if (target.IsValidTarget() && !target.IsZombie)
+                {
+                    ForceCastQ(target);
+                    Utility.DelayAction.Add(1, ForceW);
+                }
+            }
+            if (Q.IsReady() && E.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
+            {
+                var epos = Player.ServerPosition +
+                          (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
+                E.Cast(epos);
+                Utility.DelayAction.Add(190, () => Q.Cast(epos));
             }
         }
 
