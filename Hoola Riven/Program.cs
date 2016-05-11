@@ -66,8 +66,8 @@ namespace HoolaRiven
             if (Player.ChampionName != "Riven") return;
             Game.PrintChat("Hoola Riven - Loaded Successfully, Good Luck! :):)");
             Q = new Spell(SpellSlot.Q);
-            W = new Spell(SpellSlot.W);
-            E = new Spell(SpellSlot.E, 300);
+            W = new Spell(SpellSlot.W, 250f);
+            E = new Spell(SpellSlot.E, 270);
             R = new Spell(SpellSlot.R, 900);
             R.SetSkillshot(0.25f, 45, 1600, false, SkillshotType.SkillshotCone);
 
@@ -630,8 +630,7 @@ namespace HoolaRiven
             Player.IssueOrder(GameObjectOrder.MoveTo, Player.Position.Extend(Game.CursorPos, Player.Distance(Game.CursorPos) + 10));
         }
 
-      private static bool InWRange(GameObject target)=> (Player.HasBuff("RivenFengShuiEngine") && target != null) ?
-                    330 >= Player.Distance(target.Position) : 265 >= Player.Distance(target.Position);
+      private static bool InWRange(GameObject target)=> (Player.HasBuff("RivenFengShuiEngine") ? 330 : 265;
         
 
         private static void ForceSkill()
