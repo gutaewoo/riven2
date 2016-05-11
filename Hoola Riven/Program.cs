@@ -16,7 +16,7 @@ namespace HoolaRiven
         private const string IsFirstR = "RivenFengShuiEngine";
         private const string IsSecondR = "RivenIzunaBlade";
         private static readonly SpellSlot Flash = Player.GetSpellSlot("summonerFlash");
-        private static Spell Q, W, E, R;
+        private static Spell Q, Q1, W, E, R;
         private static int QStack = 1;
         public static Render.Text Timer, Timer2;
         private static bool forceQ;
@@ -66,15 +66,16 @@ namespace HoolaRiven
             if (Player.ChampionName != "Riven") return;
             Game.PrintChat("Hoola Riven - Loaded Successfully, Good Luck! :):)");
             Q = new Spell(SpellSlot.Q);
-            W = new Spell(SpellSlot.W, 250f);
-            E = new Spell(SpellSlot.E, 270);
+            W = new Spell(SpellSlot.W);
+            E = new Spell(SpellSlot.E, 300);
             R = new Spell(SpellSlot.R, 900);
             R.SetSkillshot(0.25f, 45, 1600, false, SkillshotType.SkillshotCone);
 
             OnMenuLoad();
 
 
-
+            Timer = new Render.Text("Q Expiry =>  " + ((double)(LastQ - Utils.GameTimeTickCount + 3800) / 1000).ToString("0.0"), (int)Drawing.WorldToScreen(Player.Position).X - 140, (int)Drawing.WorldToScreen(Player.Position).Y + 10, 30, Color.MidnightBlue, "calibri");
+            Timer2 = new Render.Text("R Expiry =>  " + (((double)LastR - Utils.GameTimeTickCount + 15000) / 1000).ToString("0.0"), (int)Drawing.WorldToScreen(Player.Position).X - 60, (int)Drawing.WorldToScreen(Player.Position).Y + 10, 30, Color.IndianRed, "calibri");
 
             Game.OnUpdate += OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
@@ -216,10 +217,20 @@ namespace HoolaRiven
                         CastTitan();
                         return;
                     }
+                    if (W.IsReady() && InWRange(target))
+                    {
+                        ForceItem();
+                        Utility.DelayAction.Add(1, ForceW);
+                        Utility.DelayAction.Add(2, () => ForceCastQ(target));
+                    }
                     else if (Q.IsReady())
                     {
                         ForceItem();
                         Utility.DelayAction.Add(1,()=>ForceCastQ(target));
+                    }
+                    else if (E.IsReady() && !Orbwalking.InAutoAttackRange(target) && !InWRange(target))
+                    {
+                        E.Cast(target.Position);
                     }
                 }
 
@@ -358,10 +369,13 @@ namespace HoolaRiven
             UseRMaxDam();
             AutoUseW();
             Killsteal();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear) Jungleclear();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed) Harass();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass) FastHarass();
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst) Burst();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) Flee();
+            if (Utils.GameTimeTickCount - LastQ >= 3650 && QStack != 1 && !Player.IsRecalling() && KeepQ && Q.IsReady()) Q.Cast(Game.CursorPos);
         }
-
-
 
       private static void Killsteal()
         {
@@ -404,9 +418,17 @@ namespace HoolaRiven
             var heropos = Drawing.WorldToScreen(ObjectManager.Player.Position);
 
 
+            if (QStack != 1 && DrawTimer1)
+            {
+                Timer.text = ("Q Expiry =>  " + ((double)(LastQ - Utils.GameTimeTickCount + 3800) / 1000).ToString("0.0")+"S");
+                Timer.OnEndScene();
+            }
 
-
-
+            if (Player.HasBuff("RivenFengShuiEngine") && DrawTimer2)
+            {
+                Timer2.text = ("R Expiry =>  " + (((double)LastR - Utils.GameTimeTickCount + 15000) / 1000).ToString("0.0") +"S");
+                Timer2.OnEndScene();
+            }
 
             if (DrawCB) Render.Circle.DrawCircle(Player.Position, 250 + Player.AttackRange + 70, E.IsReady() ? System.Drawing.Color.FromArgb(120, 0, 170, 255) : System.Drawing.Color.IndianRed);
             if (DrawBT && Flash != SpellSlot.Unknown) Render.Circle.DrawCircle(Player.Position, 800, R.IsReady() && Flash.IsReady() ? System.Drawing.Color.FromArgb(120, 0, 170, 255) : System.Drawing.Color.IndianRed);
@@ -424,9 +446,78 @@ namespace HoolaRiven
             }
         }
 
+      private static void Jungleclear()
+        {
 
+            var Mobs = MinionManager.GetMinions(250 + Player.AttackRange + 70, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
 
+            if (Mobs.Count <= 0)
+                return;
 
+            if (W.IsReady() && E.IsReady() && !Orbwalking.InAutoAttackRange(Mobs[0]))
+            {
+                E.Cast(Mobs[0].Position);
+                Utility.DelayAction.Add(1, ForceItem);
+                Utility.DelayAction.Add(200, ForceW);
+            }
+        }
+
+      private static void Combo()
+        {
+            var targetR = TargetSelector.GetTarget(250 + Player.AttackRange + 70, TargetSelector.DamageType.Physical);
+            if (R.IsReady() && R.Instance.Name == IsFirstR && Orbwalker.InAutoAttackRange(targetR) && AlwaysR && targetR != null) ForceR();
+            if (R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && InWRange(targetR) && ComboW && AlwaysR && targetR != null)
+            {
+                ForceR();
+                Utility.DelayAction.Add(1, ForceW);
+            }
+            if (W.IsReady() && InWRange(targetR) && ComboW && targetR != null) W.Cast();
+            if (UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
+            {
+                if (!InWRange(targetR))
+                {
+                    E.Cast(targetR.Position);
+                    ForceR();
+                    Utility.DelayAction.Add(200, ForceW);
+                    Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
+                }
+            }
+            else if (!UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady() && targetR.IsValidTarget() && !targetR.IsZombie && (IsKillableR(targetR) || AlwaysR))
+            {
+                if (!InWRange(targetR))
+                {
+                    E.Cast(targetR.Position);
+                    ForceR();
+                    Utility.DelayAction.Add(200, ForceW);
+                }
+            }
+            else if (UseHoola && W.IsReady() && E.IsReady())
+            {
+                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
+                {
+                    E.Cast(targetR.Position);
+                    Utility.DelayAction.Add(10, ForceItem);
+                    Utility.DelayAction.Add(200, ForceW);
+                    Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
+                }
+            }
+            else if (!UseHoola && W.IsReady() && targetR != null && E.IsReady())
+            {
+                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
+                {
+                    E.Cast(targetR.Position);
+                    Utility.DelayAction.Add(10, ForceItem);
+                    Utility.DelayAction.Add(240, ForceW);
+                }
+            }
+            else if (E.IsReady())
+            {
+                if (targetR.IsValidTarget() && !targetR.IsZombie && !InWRange(targetR))
+                {
+                    E.Cast(targetR.Position);
+                }
+            }
+        }
 
       private static void Burst()
         {
@@ -466,6 +557,54 @@ namespace HoolaRiven
                     Utility.DelayAction.Add(210, FlashW);
                 }
             }
+        }
+
+      private static void FastHarass()
+        {
+            if (Q.IsReady() && E.IsReady())
+            {
+                var target = TargetSelector.GetTarget(450 + Player.AttackRange + 70, TargetSelector.DamageType.Physical);
+                if (target.IsValidTarget() && !target.IsZombie)
+                {
+                    if (!Orbwalking.InAutoAttackRange(target) && !InWRange(target)) E.Cast(target.Position);
+                    Utility.DelayAction.Add(10, ForceItem);
+                    Utility.DelayAction.Add(170, ()=>ForceCastQ(target));
+                }
+            }
+        }
+
+      private static void Harass()
+        {
+            var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
+            if (Q.IsReady() && W.IsReady() && E.IsReady() && QStack == 1)
+            {
+                if (target.IsValidTarget() && !target.IsZombie)
+                {
+                    ForceCastQ(target);
+                    Utility.DelayAction.Add(1, ForceW);
+                }
+            }
+            if (Q.IsReady() && E.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
+            {
+                var epos = Player.ServerPosition +
+                          (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
+                E.Cast(epos);
+                Utility.DelayAction.Add(190, () => Q.Cast(epos));
+            }
+        }
+
+      private static void Flee()
+        {
+            var enemy =
+                HeroManager.Enemies.Where(
+                    hero =>
+                        hero.IsValidTarget(Player.HasBuff("RivenFengShuiEngine")
+                            ? 70 + 195 + Player.BoundingRadius
+                            : 70 + 120 + Player.BoundingRadius) && W.IsReady());
+            var x = Player.Position.Extend(Game.CursorPos, 300);
+            if (W.IsReady() && enemy.Any()) foreach (var target in enemy) if (InWRange(target)) W.Cast();
+            if (Q.IsReady() && !Player.IsDashing()) Q.Cast(Game.CursorPos);
+            if (E.IsReady() && !Player.IsDashing()) E.Cast(x);
         }
 
       private static void OnPlay(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
@@ -508,12 +647,6 @@ namespace HoolaRiven
             }
         }
 
-
-
-
-
-
-
       private static void OnCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (!sender.IsMe) return;
@@ -534,7 +667,7 @@ namespace HoolaRiven
 
       private static bool InWRange(GameObject target)=> (Player.HasBuff("RivenFengShuiEngine") && target != null) ?
                     330 >= Player.Distance(target.Position) : 265 >= Player.Distance(target.Position);
-                    
+        
 
         private static void ForceSkill()
         {
@@ -835,7 +968,12 @@ namespace HoolaRiven
 
         public static bool IsKillableR(Obj_AI_Hero target)
         {
-            return !target.IsInvulnerable && totaldame(target) >= target.Health && basicdmg(target) <= target.Health;
+            if (RKillable && target.IsValidTarget() && (totaldame(target) >= target.Health
+                 && basicdmg(target) <= target.Health) || Player.CountEnemiesInRange(900) >= 2 && (!target.HasBuff("kindrednodeathbuff") && !target.HasBuff("Undying Rage") && !target.HasBuff("JudicatorIntervention")))
+            {
+                return true;
+            }
+            return false;
         }
 
       private static double totaldame(Obj_AI_Base target)
