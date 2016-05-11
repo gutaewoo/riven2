@@ -80,6 +80,7 @@ namespace HoolaRiven
             Obj_AI_Base.OnProcessSpellCast += OnCast;
             Obj_AI_Base.OnDoCast += OnDoCast;
             Obj_AI_Base.OnDoCast += OnDoCastLC;
+            Obj_AI_Base.OnPlayAnimation += OnPlay;
             Obj_AI_Base.OnProcessSpellCast += OnCasting;
             Interrupter2.OnInterruptableTarget += Interrupt;
         }
@@ -465,6 +466,45 @@ namespace HoolaRiven
             }
         }
 
+      private static void OnPlay(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
+        {
+            if (!sender.IsMe) return;
+
+            switch (args.Animation)
+            {
+                case "Spell1a":
+                    LastQ = Utils.GameTimeTickCount;
+                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
+                    QStack = 2;
+                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QD * 10) + 1, Reset);
+                    break;
+                case "Spell1b":
+                    LastQ = Utils.GameTimeTickCount;
+                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
+                    QStack = 3;
+                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QD * 10) + 1, Reset);
+                    break;
+                case "Spell1c":
+                    LastQ = Utils.GameTimeTickCount;
+                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
+                    QStack = 1;
+                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QLD * 10) + 3, Reset);
+                    break;
+                case "Spell3":
+                    if ((Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst ||
+                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
+                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass ||
+                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) && Youmu) CastYoumoo();
+                    break;
+                case "Spell4a":
+                    LastR = Utils.GameTimeTickCount;
+                    break;
+                case "Spell4b":
+                    var target = TargetSelector.GetSelectedTarget();
+                    if (Q.IsReady() && target.IsValidTarget()) ForceCastQ(target);
+                    break;
+            }
+        }
 
 
 
