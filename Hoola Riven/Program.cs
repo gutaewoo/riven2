@@ -473,6 +473,14 @@ namespace HoolaRiven
                     Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
                 }
             }
+            else if (UseHoola && W.IsReady() && E.IsReady())
+            {
+                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
+                {
+                    Utility.DelayAction.Add(10, ForceItem);
+                    Utility.DelayAction.Add(305, () => ForceCastQ(targetR));
+                }
+            }
             else if (E.IsReady())
             {
                 if (targetR.IsValidTarget() && !targetR.IsZombie && !InWRange(targetR))
