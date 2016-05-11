@@ -935,12 +935,8 @@ namespace HoolaRiven
 
         public static bool IsKillableR(Obj_AI_Hero target)
         {
-            if (RKillable && target.IsValidTarget() && (totaldame(target) >= target.Health
-                 && basicdmg(target) <= target.Health) || Player.CountEnemiesInRange(900) >= 2 && (!target.HasBuff("kindrednodeathbuff") && !target.HasBuff("Undying Rage") && !target.HasBuff("JudicatorIntervention")))
-            {
-                return true;
-            }
-            return false;
+            return !target.IsInvulnerable && totaldame(target) >= target.Health &&
+                   Basicdmg(target) <= target.Health;
         }
 
       private static double totaldame(Obj_AI_Base target)
