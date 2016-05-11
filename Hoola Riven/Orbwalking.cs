@@ -78,7 +78,13 @@ namespace HoolaRiven
         /// </summary>
         public enum OrbwalkingMode
         {
+            LastHit,
+            Mixed,
+            LaneClear,
+            Combo,
             CustomMode,
+            Flee,
+            FastHarass,
             Burst,
             None
         }
@@ -763,24 +769,32 @@ namespace HoolaRiven
 
                 /*Load the menu*/
 
+                _config.AddItem(
+                    new MenuItem("Flee", "Flee").SetShared().SetValue(new KeyBind('Z', KeyBindType.Press)));
 
+                _config.AddItem(
+                    new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
 
+                _config.AddItem(
+                    new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind('C', KeyBindType.Press)));
 
+                _config.AddItem(
+                    new MenuItem("LWH", "Last Hit While Harass").SetShared().SetValue(false));
 
+                _config.AddItem(
+                    new MenuItem("LaneClear", "LaneClear").SetShared().SetValue(new KeyBind('V', KeyBindType.Press)));
 
-
-
-
-
-
-
+                _config.AddItem(
+                    new MenuItem("Orbwalk", "Combo").SetShared().SetValue(new KeyBind(32, KeyBindType.Press)));
 
                 _config.AddItem(
                     new MenuItem("Burst", "Burst").SetShared().SetValue(new KeyBind('T', KeyBindType.Press)));
 
+                _config.AddItem(
+                    new MenuItem("FastHarass", "Fast Harass").SetShared().SetValue(new KeyBind('Y', KeyBindType.Press)));
 
-
-
+                _config.AddItem(
+                    new MenuItem("StillCombo", "Combo without moving").SetShared().SetValue(new KeyBind('N', KeyBindType.Press)));
 
                 Player = ObjectManager.Player;
                 Game.OnUpdate += GameOnOnGameUpdate;
@@ -845,16 +859,40 @@ namespace HoolaRiven
                         return _mode;
                     }
 
+                    if (_config.Item("Orbwalk").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.Combo;
+                    }
 
+                    if (_config.Item("StillCombo").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.Combo;
+                    }
 
+                    if (_config.Item("LaneClear").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.LaneClear;
+                    }
 
+                    if (_config.Item("Farm").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.Mixed;
+                    }
 
+                    if (_config.Item("LastHit").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.LastHit;
+                    }
 
+                    if (_config.Item("Flee").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.Flee;
+                    }
 
-
-
-
-
+                    if (_config.Item("FastHarass").GetValue<KeyBind>().Active)
+                    {
+                        return OrbwalkingMode.FastHarass;
+                    }
 
                     if (_config.Item("Burst").GetValue<KeyBind>().Active)
                     {
@@ -928,18 +966,165 @@ namespace HoolaRiven
             /// Gets the target.
             /// </summary>
             /// <returns>AttackableUnit.</returns>
+            public virtual AttackableUnit GetTarget()
+            {
+                AttackableUnit result = null;
 
+                if ((ActiveMode == OrbwalkingMode.Mixed || ActiveMode == OrbwalkingMode.LaneClear) &&
+                    !_config.Item("PriorizeFarm").GetValue<bool>())
+                {
+                    var target = TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
+                    if (target != null && InAutoAttackRange(target))
+                    {
+                        return target;
+                    }
+                }
 
+                /*Killable Minion*/
+                if (ActiveMode == OrbwalkingMode.LaneClear || (ActiveMode == OrbwalkingMode.Mixed && _config.Item("LWH").GetValue<bool>()) ||
+                    ActiveMode == OrbwalkingMode.LastHit)
+                {
+                    var MinionList =
+                        ObjectManager.Get<Obj_AI_Minion>()
+                            .Where(
+                                minion =>
+                                    minion.IsValidTarget() && InAutoAttackRange(minion))
+                                    .OrderByDescending(minion => minion.CharData.BaseSkinName.Contains("Siege"))
+                                    .ThenBy(minion => minion.CharData.BaseSkinName.Contains("Super"))
+                                    .ThenBy(minion => minion.Health)
+                                    .ThenByDescending(minion => minion.MaxHealth);
 
+                    foreach (var minion in MinionList)
+                    {
+                        var t = (int)(Player.AttackCastDelay * 1000) - 100 + Game.Ping / 2 +
+                                1000 * (int)Math.Max(0, Player.Distance(minion) - Player.BoundingRadius) / int.MaxValue;
+                        var predHealth = HealthPrediction.GetHealthPrediction(minion, t, FarmDelay);
 
+                        if (minion.Team != GameObjectTeam.Neutral && (_config.Item("AttackPetsnTraps").GetValue<bool>() &&
+                            minion.CharData.BaseSkinName != "jarvanivstandard" || MinionManager.IsMinion(minion, _config.Item("AttackWards").GetValue<bool>())))
+                        {
+                            if (predHealth <= 0)
+                            {
+                                FireOnNonKillableMinion(minion);
+                            }
 
+                            if (predHealth > 0 && predHealth <= Player.GetAutoAttackDamage(minion, true))
+                            {
+                                return minion;
+                            }
+                        }
 
+                        if (minion.Team == GameObjectTeam.Neutral && (_config.Item("AttackBarrel").GetValue<bool>() &&
+                            minion.CharData.BaseSkinName == "gangplankbarrel" && minion.IsHPBarRendered))
+                        {
+                            if (minion.Health < 2)
+                            {
+                                return minion;
+                            }
+                        }
+                    }
+                }
 
+                //Forced target
+                if (_forcedTarget.IsValidTarget() && InAutoAttackRange(_forcedTarget))
+                {
+                    return _forcedTarget;
+                }
 
+                /* turrets / inhibitors / nexus */
+                if (ActiveMode == OrbwalkingMode.LaneClear && (!_config.Item("FocusMinionsOverTurrets").GetValue<KeyBind>().Active || !MinionManager.GetMinions(ObjectManager.Player.Position, GetRealAutoAttackRange(ObjectManager.Player)).Any()))
+                {
+                    /* turrets */
+                    foreach (var turret in
+                        ObjectManager.Get<Obj_AI_Turret>().Where(t => t.IsValidTarget() && InAutoAttackRange(t)))
+                    {
+                        return turret;
+                    }
 
+                    /* inhibitor */
+                    foreach (var turret in
+                        ObjectManager.Get<Obj_BarracksDampener>().Where(t => t.IsValidTarget() && InAutoAttackRange(t)))
+                    {
+                        return turret;
+                    }
 
+                    /* nexus */
+                    foreach (var nexus in
+                        ObjectManager.Get<Obj_HQ>().Where(t => t.IsValidTarget() && InAutoAttackRange(t)))
+                    {
+                        return nexus;
+                    }
+                }
 
+                /*Champions*/
+                if (ActiveMode != OrbwalkingMode.LastHit && ActiveMode != OrbwalkingMode.Flee)
+                {
+                    var target = TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
+                    if (target.IsValidTarget() && InAutoAttackRange(target))
+                    {
+                        return target;
+                    }
+                }
 
+                /*Jungle minions*/
+                if (ActiveMode == OrbwalkingMode.LaneClear || ActiveMode == OrbwalkingMode.Mixed)
+                {
+                    var jminions =
+                        ObjectManager.Get<Obj_AI_Minion>()
+                            .Where(
+                                mob =>
+                                mob.IsValidTarget() && mob.Team == GameObjectTeam.Neutral && this.InAutoAttackRange(mob)
+                                && mob.CharData.BaseSkinName != "gangplankbarrel");
+
+                    result = _config.Item("Smallminionsprio").GetValue<bool>()
+                                 ? jminions.MinOrDefault(mob => mob.MaxHealth)
+                                 : jminions.MaxOrDefault(mob => mob.MaxHealth);
+
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+
+                /*Lane Clear minions*/
+                if (ActiveMode == OrbwalkingMode.LaneClear)
+                {
+                    if (!ShouldWait())
+                    {
+                        if (_prevMinion.IsValidTarget() && InAutoAttackRange(_prevMinion))
+                        {
+                            var predHealth = HealthPrediction.LaneClearHealthPrediction(
+                                _prevMinion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay);
+                            if (predHealth >= 2 * Player.GetAutoAttackDamage(_prevMinion) ||
+                                Math.Abs(predHealth - _prevMinion.Health) < float.Epsilon)
+                            {
+                                return _prevMinion;
+                            }
+                        }
+
+                        result = (from minion in
+                                      ObjectManager.Get<Obj_AI_Minion>()
+                                          .Where(minion => minion.IsValidTarget() && InAutoAttackRange(minion) &&
+                                          (_config.Item("AttackWards").GetValue<bool>() || !MinionManager.IsWard(minion)) &&
+                                          (_config.Item("AttackPetsnTraps").GetValue<bool>() && minion.CharData.BaseSkinName != "jarvanivstandard" || MinionManager.IsMinion(minion, _config.Item("AttackWards").GetValue<bool>())) &&
+                                          minion.CharData.BaseSkinName != "gangplankbarrel")
+                                  let predHealth =
+                                      HealthPrediction.LaneClearHealthPrediction(
+                                          minion, (int)((Player.AttackDelay * 1000) * LaneClearWaitTimeMod), FarmDelay)
+                                  where
+                                      predHealth >= 2 * Player.GetAutoAttackDamage(minion) ||
+                                      Math.Abs(predHealth - minion.Health) < float.Epsilon
+                                  select minion).MaxOrDefault(m => !MinionManager.IsMinion(m, true) ? float.MaxValue : m.Health);
+
+                        if (result != null)
+                        {
+                            _prevMinion = (Obj_AI_Minion)result;
+                        }
+                    }
+                }
+
+                return result;
+            }
 
             /// <summary>
             /// Fired when the game is updated.
@@ -954,7 +1139,8 @@ namespace HoolaRiven
                         return;
                     }
 
-
+                    //Block movement if StillCombo is used
+                    Move = !_config.Item("StillCombo").GetValue<KeyBind>().Active;
 
                     //Prevent canceling important spells
                     if (Player.IsCastingInterruptableSpell(true))
