@@ -80,7 +80,6 @@ namespace HoolaRiven
             Obj_AI_Base.OnProcessSpellCast += OnCast;
             Obj_AI_Base.OnDoCast += OnDoCast;
             Obj_AI_Base.OnDoCast += OnDoCastLC;
-            Obj_AI_Base.OnPlayAnimation += OnPlay;
             Obj_AI_Base.OnProcessSpellCast += OnCasting;
             Interrupter2.OnInterruptableTarget += Interrupt;
         }
