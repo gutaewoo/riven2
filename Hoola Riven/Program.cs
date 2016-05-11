@@ -453,37 +453,7 @@ namespace HoolaRiven
             }
         }
 
-      private static void Combo()
-        {
-            var targetR = TargetSelector.GetTarget(250 + Player.AttackRange + 70, TargetSelector.DamageType.Physical);
-            
-            if (W.IsReady() && InWRange(targetR) && ComboW && targetR != null) W.Cast();
-            if (UseHoola && R.IsReady() && R.Instance.Name == IsFirstR && W.IsReady() && targetR != null && E.IsReady())
-            {
-                if (!InWRange(targetR))
-                {
-                    E.Cast(targetR.Position);
-                    Utility.DelayAction.Add(30, () => ForceCastQ(targetR));
-                }
-            }
-            else if (UseHoola && W.IsReady() && E.IsReady())
-            {
-                if (targetR.IsValidTarget() && targetR != null && !targetR.IsZombie && !InWRange(targetR))
-                {
-                    E.Cast(targetR.Position);
-                    if (InWRange(targetR))
-                    Utility.DelayAction.Add(100, ForceW);
-                    Utility.DelayAction.Add(30, () => ForceCastQ(targetR));
-                }
-            }
-            else if (E.IsReady())
-            {
-                if (targetR.IsValidTarget() && !targetR.IsZombie && !InWRange(targetR))
-                {
-                    E.Cast(targetR.Position);
-                }
-            }
-        }
+
 
       private static void Burst()
         {
@@ -525,92 +495,12 @@ namespace HoolaRiven
             }
         }
 
-      private static void FastHarass()
-        {
-            var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
-            if (Q.IsReady() && QStack == 1)
-            {
-                if (target.IsValidTarget() && !target.IsZombie)
-                {
-                    ForceCastQ(target);
-                    Utility.DelayAction.Add(1, ForceW);
-                }
-            }
-        }
 
-      private static void Harass()
-        {
-            var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
-            if (Q.IsReady() && W.IsReady() && E.IsReady() && QStack == 1)
-            {
-                if (target.IsValidTarget() && !target.IsZombie)
-                {
-                    ForceCastQ(target);
-                    Utility.DelayAction.Add(1, ForceW);
-                }
-            }
-            if (Q.IsReady() && E.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
-            {
-                var epos = Player.ServerPosition +
-                          (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
-                E.Cast(epos);
-                Utility.DelayAction.Add(190, () => Q.Cast(epos));
-            }
-        }
 
-      private static void Flee()
-        {
-            var enemy =
-                HeroManager.Enemies.Where(
-                    hero =>
-                        hero.IsValidTarget(Player.HasBuff("RivenFengShuiEngine")
-                            ? 70 + 195 + Player.BoundingRadius
-                            : 70 + 120 + Player.BoundingRadius) && W.IsReady());
-            var x = Player.Position.Extend(Game.CursorPos, 300);
-            if (W.IsReady() && enemy.Any()) foreach (var target in enemy) if (InWRange(target)) W.Cast();
-            if (Q.IsReady() && !Player.IsDashing()) Q.Cast(Game.CursorPos);
-            if (E.IsReady() && !Player.IsDashing()) E.Cast(x);
-        }
 
-      private static void OnPlay(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
-        {
-            if (!sender.IsMe) return;
 
-            switch (args.Animation)
-            {
-                case "Spell1a":
-                    LastQ = Utils.GameTimeTickCount;
-                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
-                    QStack = 2;
-                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QD * 10) + 1, Reset);
-                    break;
-                case "Spell1b":
-                    LastQ = Utils.GameTimeTickCount;
-                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
-                    QStack = 3;
-                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QD * 10) + 1, Reset);
-                    break;
-                case "Spell1c":
-                    LastQ = Utils.GameTimeTickCount;
-                    if (Qstrange && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None) Game.Say("/d");
-                    QStack = 1;
-                    if (Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.None && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.LastHit && Orbwalker.ActiveMode != Orbwalking.OrbwalkingMode.Flee) Utility.DelayAction.Add((QLD * 10) + 3, Reset);
-                    break;
-                case "Spell3":
-                    if ((Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst ||
-                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
-                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass ||
-                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) && Youmu);
-                    break;
-                case "Spell4a":
-                    LastR = Utils.GameTimeTickCount;
-                    break;
-                case "Spell4b":
-                    var target = TargetSelector.GetSelectedTarget();
-                    if (Q.IsReady() && target.IsValidTarget()) ForceCastQ(target);
-                    break;
-            }
-        }
+
+
 
       private static void OnCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
