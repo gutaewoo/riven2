@@ -577,20 +577,13 @@ namespace HoolaRiven
       private static void Harass()
         {
             var target = TargetSelector.GetTarget(400, TargetSelector.DamageType.Physical);
-            if (Q.IsReady() && W.IsReady() && E.IsReady() && QStack == 1)
+            if (Q.IsReady() && QStack == 1)
             {
                 if (target.IsValidTarget() && !target.IsZombie)
                 {
                     ForceCastQ(target);
                     Utility.DelayAction.Add(1, ForceW);
                 }
-            }
-            if (Q.IsReady() && E.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
-            {
-                var epos = Player.ServerPosition +
-                          (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
-                E.Cast(epos);
-                Utility.DelayAction.Add(190, () => Q.Cast(epos));
             }
         }
 
