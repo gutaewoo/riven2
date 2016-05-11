@@ -462,10 +462,6 @@ namespace HoolaRiven
             {
                 if (!InWRange(targetR))
                 {
-                    E.Cast(targetR.Position);
-                    ForceR();
-                    Utility.DelayAction.Add(200, ForceW);
-                    Utility.DelayAction.Add(30, () => ForceCastQ(targetR));
                 }
             }
             else if (UseHoola && W.IsReady() && E.IsReady())
