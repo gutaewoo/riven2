@@ -370,6 +370,7 @@ namespace HoolaRiven
             AutoUseW();
             Killsteal();
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst) Burst();
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) Flee();
             if (Utils.GameTimeTickCount - LastQ >= 3650 && QStack != 1 && !Player.IsRecalling() && KeepQ && Q.IsReady()) Q.Cast(Game.CursorPos);
         }
 
