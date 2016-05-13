@@ -191,25 +191,6 @@ namespace HoolaRiven
             var target = (Obj_AI_Hero)args.Target;
                 if (KillstealR && R.IsReady() && R.Instance.Name == IsSecondR) if (target.Health < (Rdame(target, target.Health) + Player.GetAutoAttackDamage(target)) && target.Health > Player.GetAutoAttackDamage(target)) R.Cast(target.Position);
                 if (KillstealW && W.IsReady()) if (target.Health < (W.GetDamage(target) + Player.GetAutoAttackDamage(target)) && target.Health > Player.GetAutoAttackDamage(target)) W.Cast();
-                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                {
-                    if (HasTitan())
-                    {
-                        CastTitan();
-                        return;
-                    }
-                    if (Q.IsReady())
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, ()=>ForceCastQ(target));
-                    }
-                    else if (W.IsReady() && InWRange(target))
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, ForceW);
-                    }
-                    else if (E.IsReady() && !Orbwalking.InAutoAttackRange(target)) E.Cast(target.Position);
-                }
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass)
                 {
                     if (HasTitan())
@@ -630,7 +611,6 @@ namespace HoolaRiven
                     break;
                 case "Spell3":
                     if ((Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst ||
-                        Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo ||
                         Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.FastHarass ||
                         Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) && Youmu) CastYoumoo();
                     break;
