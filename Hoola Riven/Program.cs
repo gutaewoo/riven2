@@ -547,12 +547,6 @@ namespace HoolaRiven
                 E.Cast(epos);
                 Utility.DelayAction.Add(190, () => Q.Cast(epos));
             }
-            if (Q.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
-            {
-                var epos = Player.ServerPosition +
-                          (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
-                Utility.DelayAction.Add(190, () => Q.Cast(epos));
-            }
         }
 
       private static void Flee()
