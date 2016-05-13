@@ -81,7 +81,6 @@ namespace HoolaRiven
             LastHit,
             Mixed,
             LaneClear,
-            Combo,
             CustomMode,
             Flee,
             FastHarass,
