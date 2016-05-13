@@ -83,7 +83,6 @@ namespace HoolaRiven
             LaneClear,
             CustomMode,
             Flee,
-            FastHarass,
             Burst,
             None
         }
@@ -788,8 +787,7 @@ namespace HoolaRiven
                 _config.AddItem(
                     new MenuItem("Burst", "Burst").SetShared().SetValue(new KeyBind('T', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("FastHarass", "Fast Harass").SetShared().SetValue(new KeyBind('Y', KeyBindType.Press)));
+
 
 
                 Player = ObjectManager.Player;
@@ -877,10 +875,7 @@ namespace HoolaRiven
                         return OrbwalkingMode.Flee;
                     }
 
-                    if (_config.Item("FastHarass").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.FastHarass;
-                    }
+
 
                     if (_config.Item("Burst").GetValue<KeyBind>().Active)
                     {
