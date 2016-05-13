@@ -199,7 +199,7 @@ namespace HoolaRiven
                         CastTitan();
                         return;
                     }
-                    if (QStack == 1 && Q.IsReady())
+                    if (QStack == 2 && Q.IsReady())
                     {
                         ForceItem();
                         Utility.DelayAction.Add(1, () => ForceCastQ(target));
@@ -540,7 +540,7 @@ namespace HoolaRiven
                     Utility.DelayAction.Add(1, ForceW);
                 }
             }
-            if (Q.IsReady() && E.IsReady() && QStack == 3 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
+            if (Q.IsReady() && E.IsReady() && QStack == 2 && !Orbwalking.CanAttack() && Orbwalking.CanMove(5))
             {
                 var epos = Player.ServerPosition +
                           (Player.ServerPosition - target.ServerPosition).Normalized() * 300;
