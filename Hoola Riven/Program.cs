@@ -199,11 +199,6 @@ namespace HoolaRiven
                         CastTitan();
                         return;
                     }
-                    if (QStack == 2 && Q.IsReady())
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, () => ForceCastQ(target));
-                    }
                 }
 
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst)
