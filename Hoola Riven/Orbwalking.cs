@@ -79,7 +79,6 @@ namespace HoolaRiven
         public enum OrbwalkingMode
         {
             LastHit,
-            Mixed,
             LaneClear,
             CustomMode,
             Flee,
@@ -773,8 +772,6 @@ namespace HoolaRiven
                 _config.AddItem(
                     new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("Farm", "Mixed").SetShared().SetValue(new KeyBind('C', KeyBindType.Press)));
 
                 _config.AddItem(
                     new MenuItem("LWH", "Last Hit While Harass").SetShared().SetValue(false));
@@ -860,10 +857,7 @@ namespace HoolaRiven
                         return OrbwalkingMode.LaneClear;
                     }
 
-                    if (_config.Item("Farm").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Mixed;
-                    }
+
 
                     if (_config.Item("LastHit").GetValue<KeyBind>().Active)
                     {
@@ -953,18 +947,9 @@ namespace HoolaRiven
             {
                 AttackableUnit result = null;
 
-                if ((ActiveMode == OrbwalkingMode.Mixed || ActiveMode == OrbwalkingMode.LaneClear) &&
-                    !_config.Item("PriorizeFarm").GetValue<bool>())
-                {
-                    var target = TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
-                    if (target != null && InAutoAttackRange(target))
-                    {
-                        return target;
-                    }
-                }
 
                 /*Killable Minion*/
-                if (ActiveMode == OrbwalkingMode.LaneClear || (ActiveMode == OrbwalkingMode.Mixed && _config.Item("LWH").GetValue<bool>()) ||
+                if (ActiveMode == OrbwalkingMode.LaneClear || 
                     ActiveMode == OrbwalkingMode.LastHit)
                 {
                     var MinionList =
@@ -1050,7 +1035,7 @@ namespace HoolaRiven
                 }
 
                 /*Jungle minions*/
-                if (ActiveMode == OrbwalkingMode.LaneClear || ActiveMode == OrbwalkingMode.Mixed)
+                if (ActiveMode == OrbwalkingMode.LaneClear)
                 {
                     var jminions =
                         ObjectManager.Get<Obj_AI_Minion>()
