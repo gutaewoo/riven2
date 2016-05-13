@@ -192,14 +192,7 @@ namespace HoolaRiven
                 if (KillstealR && R.IsReady() && R.Instance.Name == IsSecondR) if (target.Health < (Rdame(target, target.Health) + Player.GetAutoAttackDamage(target)) && target.Health > Player.GetAutoAttackDamage(target)) R.Cast(target.Position);
                 if (KillstealW && W.IsReady()) if (target.Health < (W.GetDamage(target) + Player.GetAutoAttackDamage(target)) && target.Health > Player.GetAutoAttackDamage(target)) W.Cast();
 
-                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
-                {
-                    if (HasTitan())
-                    {
-                        CastTitan();
-                        return;
-                    }
-                }
+
 
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst)
                 {
