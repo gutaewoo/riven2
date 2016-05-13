@@ -199,7 +199,7 @@ namespace HoolaRiven
                         CastTitan();
                         return;
                     }
-                    if (QStack == 2 && Q.IsReady())
+                    if (QStack == 1 && Q.IsReady())
                     {
                         ForceItem();
                         Utility.DelayAction.Add(1, () => ForceCastQ(target));
