@@ -320,6 +320,7 @@ namespace HoolaRiven
             Timer2.Y = (int)Drawing.WorldToScreen(Player.Position).Y + 65;
             ForceSkill();
             UseRMaxDam();
+            AutoUseW();
             Killsteal();
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Burst) Burst();
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Flee) Flee();
