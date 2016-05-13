@@ -791,8 +791,6 @@ namespace HoolaRiven
                 _config.AddItem(
                     new MenuItem("FastHarass", "Fast Harass").SetShared().SetValue(new KeyBind('Y', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("StillCombo", "Combo without moving").SetShared().SetValue(new KeyBind('N', KeyBindType.Press)));
 
                 Player = ObjectManager.Player;
                 Game.OnUpdate += GameOnOnGameUpdate;
@@ -858,10 +856,6 @@ namespace HoolaRiven
                     }
 
 
-                    if (_config.Item("StillCombo").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.Combo;
-                    }
 
                     if (_config.Item("LaneClear").GetValue<KeyBind>().Active)
                     {
@@ -1133,8 +1127,6 @@ namespace HoolaRiven
                         return;
                     }
 
-                    //Block movement if StillCombo is used
-                    Move = !_config.Item("StillCombo").GetValue<KeyBind>().Active;
 
                     //Prevent canceling important spells
                     if (Player.IsCastingInterruptableSpell(true))
