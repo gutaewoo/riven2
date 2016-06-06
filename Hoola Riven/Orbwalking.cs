@@ -942,7 +942,7 @@ namespace HoolaRiven
 
 
                 /*Killable Minion*/
-                if (ActiveMode == OrbwalkingMode.LaneClear || 
+                if (ActiveMode == OrbwalkingMode.LaneClear)
                 {
                     var MinionList =
                         ObjectManager.Get<Obj_AI_Minion>()
