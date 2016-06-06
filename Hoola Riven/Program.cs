@@ -399,7 +399,6 @@ namespace HoolaRiven
 
             if (W.IsReady() && E.IsReady() && !Orbwalking.InAutoAttackRange(Mobs[0]))
             {
-                E.Cast(Mobs[0].Position);
                 Utility.DelayAction.Add(1, ForceItem);
                 Utility.DelayAction.Add(200, ForceW);
             }
