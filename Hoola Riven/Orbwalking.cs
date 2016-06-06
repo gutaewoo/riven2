@@ -78,7 +78,6 @@ namespace HoolaRiven
         /// </summary>
         public enum OrbwalkingMode
         {
-            LastHit,
             LaneClear,
             CustomMode,
             Flee,
@@ -769,8 +768,6 @@ namespace HoolaRiven
                 _config.AddItem(
                     new MenuItem("Flee", "Flee").SetShared().SetValue(new KeyBind('Z', KeyBindType.Press)));
 
-                _config.AddItem(
-                    new MenuItem("LastHit", "Last hit").SetShared().SetValue(new KeyBind('X', KeyBindType.Press)));
 
 
                 _config.AddItem(
@@ -859,10 +856,6 @@ namespace HoolaRiven
 
 
 
-                    if (_config.Item("LastHit").GetValue<KeyBind>().Active)
-                    {
-                        return OrbwalkingMode.LastHit;
-                    }
 
                     if (_config.Item("Flee").GetValue<KeyBind>().Active)
                     {
@@ -950,7 +943,6 @@ namespace HoolaRiven
 
                 /*Killable Minion*/
                 if (ActiveMode == OrbwalkingMode.LaneClear || 
-                    ActiveMode == OrbwalkingMode.LastHit)
                 {
                     var MinionList =
                         ObjectManager.Get<Obj_AI_Minion>()
@@ -1025,7 +1017,7 @@ namespace HoolaRiven
                 }
 
                 /*Champions*/
-                if (ActiveMode != OrbwalkingMode.LastHit && ActiveMode != OrbwalkingMode.Flee)
+                if (ActiveMode != OrbwalkingMode.Flee)
                 {
                     var target = TargetSelector.GetTarget(-1, TargetSelector.DamageType.Physical);
                     if (target.IsValidTarget() && InAutoAttackRange(target))
