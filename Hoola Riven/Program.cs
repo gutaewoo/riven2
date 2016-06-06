@@ -142,7 +142,6 @@ namespace HoolaRiven
                     if ((!Q.IsReady() || (Q.IsReady() && !LaneQ)) && (!W.IsReady() || (W.IsReady() && LaneW == 0) || Minions.Count < LaneW) &&
                         E.IsReady() && LaneE)
                     {
-                        E.Cast(Minions[0].Position);
                         Utility.DelayAction.Add(1, ForceItem);
                     }
                 }
@@ -177,10 +176,6 @@ namespace HoolaRiven
                         {
                             ForceItem();
                             Utility.DelayAction.Add(1, ForceW);
-                        }
-                        else if (E.IsReady())
-                        {
-                            E.Cast(Mobs[0].Position);
                         }
                     }
                 }
