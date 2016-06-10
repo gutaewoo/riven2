@@ -387,16 +387,6 @@ namespace HoolaRiven
       private static void Jungleclear()
         {
 
-            var Mobs = MinionManager.GetMinions(250 + Player.AttackRange + 70, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
-
-            if (Mobs.Count <= 0)
-                return;
-
-            if (W.IsReady() && E.IsReady() && !Orbwalking.InAutoAttackRange(Mobs[0]))
-            {
-                Utility.DelayAction.Add(1, ForceItem);
-                Utility.DelayAction.Add(200, ForceW);
-            }
         }
 
       private static void Combo()
