@@ -122,28 +122,7 @@ namespace HoolaRiven
             {
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
-                    var Minions = MinionManager.GetMinions(70 + 120 + Player.BoundingRadius);
-                    if (HasTitan())
-                    {
-                        CastTitan();
-                        return;
-                    }
-                    if (Q.IsReady() && LaneQ)
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, ()=>ForceCastQ(Minions[0]));
-                    }
-                    if ((!Q.IsReady() || (Q.IsReady() && !LaneQ)) && W.IsReady() && LaneW != 0 &&
-                        Minions.Count >= LaneW)
-                    {
-                        ForceItem();
-                        Utility.DelayAction.Add(1, ForceW);
-                    }
-                    if ((!Q.IsReady() || (Q.IsReady() && !LaneQ)) && (!W.IsReady() || (W.IsReady() && LaneW == 0) || Minions.Count < LaneW) &&
-                        E.IsReady() && LaneE)
-                    {
-                        Utility.DelayAction.Add(1, ForceItem);
-                    }
+
                 }
             }
         }
