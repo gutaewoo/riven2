@@ -137,26 +137,7 @@ namespace HoolaRiven
             {
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
-                    var Mobs = MinionManager.GetMinions(120 + 70 + Player.BoundingRadius, MinionTypes.All,
-                        MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
-                    if (Mobs.Count != 0)
-                    {
-                        if (HasTitan())
-                        {
-                            CastTitan();
-                            return;
-                        }
-                        if (Q.IsReady())
-                        {
-                            ForceItem();
-                            Utility.DelayAction.Add(1, ()=> ForceCastQ(Mobs[0]));
-                        }
-                        else if (W.IsReady())
-                        {
-                            ForceItem();
-                            Utility.DelayAction.Add(1, ForceW);
-                        }
-                    }
+
                 }
             }
             if (args.Target is Obj_AI_Turret || args.Target is Obj_Barracks || args.Target is Obj_BarracksDampener || args.Target is Obj_Building) if (args.Target.IsValid && args.Target != null && Q.IsReady() && LaneQ && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear) ForceCastQ((Obj_AI_Base)args.Target);
