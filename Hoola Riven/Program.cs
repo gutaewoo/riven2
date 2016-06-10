@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -122,7 +122,28 @@ namespace HoolaRiven
             {
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
-
+                    var Minions = MinionManager.GetMinions(70 + 120 + Player.BoundingRadius);
+                    if (HasTitan())
+                    {
+                        CastTitan();
+                        return;
+                    }
+                    if (Q.IsReady() && LaneQ)
+                    {
+                        ForceItem();
+                        Utility.DelayAction.Add(1, ()=>ForceCastQ(Minions[0]));
+                    }
+                    if ((!Q.IsReady() || (Q.IsReady() && !LaneQ)) && W.IsReady() && LaneW != 0 &&
+                        Minions.Count >= LaneW)
+                    {
+                        ForceItem();
+                        Utility.DelayAction.Add(1, ForceW);
+                    }
+                    if ((!Q.IsReady() || (Q.IsReady() && !LaneQ)) && (!W.IsReady() || (W.IsReady() && LaneW == 0) || Minions.Count < LaneW) &&
+                        E.IsReady() && LaneE)
+                    {
+                        Utility.DelayAction.Add(1, ForceItem);
+                    }
                 }
             }
         }
@@ -137,7 +158,12 @@ namespace HoolaRiven
             {
                 if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
                 {
+                    var Mobs = MinionManager.GetMinions(120 + 70 + Player.BoundingRadius, MinionTypes.All,
+                        MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+                    if (Mobs.Count != 0)
+                    {
 
+                    }
                 }
             }
             if (args.Target is Obj_AI_Turret || args.Target is Obj_Barracks || args.Target is Obj_BarracksDampener || args.Target is Obj_Building) if (args.Target.IsValid && args.Target != null && Q.IsReady() && LaneQ && Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear) ForceCastQ((Obj_AI_Base)args.Target);
@@ -347,6 +373,16 @@ namespace HoolaRiven
       private static void Jungleclear()
         {
 
+            var Mobs = MinionManager.GetMinions(250 + Player.AttackRange + 70, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+
+            if (Mobs.Count <= 0)
+                return;
+
+            if (W.IsReady() && E.IsReady() && !Orbwalking.InAutoAttackRange(Mobs[0]))
+            {
+                Utility.DelayAction.Add(1, ForceItem);
+                Utility.DelayAction.Add(200, ForceW);
+            }
         }
 
       private static void Combo()
