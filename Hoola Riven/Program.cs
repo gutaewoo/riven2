@@ -681,7 +681,7 @@ namespace HoolaRiven
 
                             break;
                     }
-                    if (args.SData.Name.Contains("IreliaEquilibriumStrike"))
+                    if (args.SData.Name.Contains("IreliaEquilibriumStrik"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
@@ -689,42 +689,42 @@ namespace HoolaRiven
                             else if (E.IsReady()) E.Cast(epos);
                         }
                     }
-                    if (args.SData.Name.Contains("TalonCutthroat"))
+                    if (args.SData.Name.Contains("TalonCutthroa"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (W.IsReady()) W.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("RenektonPreExecute"))
+                    if (args.SData.Name.Contains("RenektonPreExecut"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (W.IsReady()) W.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("GarenRPreCast"))
+                    if (args.SData.Name.Contains("GarenRPreCas"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (E.IsReady()) E.Cast(epos);
                         }
                     }
-                    if (args.SData.Name.Contains("GarenQAttack"))
+                    if (args.SData.Name.Contains("GarenQAttac"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (E.IsReady()) E.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("XenZhaoThrust3"))
+                    if (args.SData.Name.Contains("XenZhaoThrust"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (W.IsReady()) W.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("RengarQ"))
+                    if (args.SData.Name.Contains("Rengar"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
@@ -745,28 +745,28 @@ namespace HoolaRiven
                             if (E.IsReady()) E.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("TwitchEParticle"))
+                    if (args.SData.Name.Contains("TwitchEParticl"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (E.IsReady()) E.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("FizzPiercingStrike"))
+                    if (args.SData.Name.Contains("FizzPiercingStrik"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (E.IsReady()) E.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("HungeringStrike"))
+                    if (args.SData.Name.Contains("HungeringStrik"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
                             if (E.IsReady()) E.Cast();
                         }
                     }
-                    if (args.SData.Name.Contains("YasuoDash"))
+                    if (args.SData.Name.Contains("YasuoDas"))
                     {
                         if (args.Target.NetworkId == Player.NetworkId)
                         {
