@@ -15,7 +15,7 @@ namespace HoolaRiven
         private static readonly HpBarIndicator Indicator = new HpBarIndicator();
         private const string IsFirstR = "RivenFengShuiEngine";
         private const string IsSecondR = "RivenIzunaBlade";
-        private static readonly SpellSlot Flash = Player.GetSpellSlot("summonerFlash");
+        private static readonly SpellSlot Flash = Player.GetSpellSlot("SummonerFlash");
         private static Spell Q, Q1, W, E, R;
         private static int QStack = 1;
         public static Render.Text Timer, Timer2;
