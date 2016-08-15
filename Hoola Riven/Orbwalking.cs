@@ -79,7 +79,6 @@ namespace HoolaRiven
         public enum OrbwalkingMode
         {
             LastHit,
-            LaneClear,
             CustomMode,
             Flee,
             Burst,
